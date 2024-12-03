@@ -1,0 +1,16 @@
+# Пути к данным для обучения и валидации
+train: C:/Users/Matvej/Desktop/Programm/Python/AI_Project_2/dataset/train/images
+val: C:/Users/Matvej/Desktop/Programm/Python/AI_Project_2/dataset/val/images
+#
+# Количество классов
+nc: 7
+
+# Имена классов
+names:
+  0: missing_hole
+  1: mouse_bite
+  2: open_circuit
+  3: short
+  4: spur
+  5: spurious_copper
+  6: extra_hole

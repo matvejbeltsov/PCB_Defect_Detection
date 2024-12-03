@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCB Defect Detection</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { color: #333; }
+    .form-container { margin-bottom: 20px; }
+    button { margin: 5px; padding: 10px 20px; background-color: #007BFF; color: white; border: none; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <h1>PCB Defect Detection</h1>
+  <div class="form-container">
+    <label for="gerber">Загрузите Gerber-файл:</label>
+    <input type="file" id="gerber" />
+    <br><br>
+    <label for="photo">Загрузите фото платы:</label>
+    <input type="file" id="photo" />
+    <br><br>
+    <button onclick="uploadFiles()">Сравнить</button>
+  </div>
+  <div id="result"></div>
+  <div id="diff-image"></div>
+
+  <script>
+    async function uploadFiles() {
+      const gerberInput = document.getElementById("gerber");
+      const photoInput = document.getElementById("photo");
+      const resultDiv = document.getElementById("result");
+      const diffImageDiv = document.getElementById("diff-image");
+
+      if (!gerberInput.files[0] || !photoInput.files[0]) {
+        resultDiv.innerHTML = '<p class="error">Выберите оба файла.</p>';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("gerber", gerberInput.files[0]);
+      formData.append("photo", photoInput.files[0]);
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/upload/", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Ошибка при запросе");
+        }
+
+        const data = await response.json();
+        resultDiv.innerHTML = `<p>Обработка завершена. Вы можете <a href="http://127.0.0.1:8000/diff/" target="_blank">скачать изображение с разницей</a>.</p>`;
+
+        // Показать изображение с разницей
+        diffImageDiv.innerHTML = `<img src="http://127.0.0.1:8000/diff/" alt="Разница" style="max-width: 100%;">`;
+      } catch (error) {
+        resultDiv.innerHTML = `<p class="error">Ошибка при запросе: ${error.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
+#
